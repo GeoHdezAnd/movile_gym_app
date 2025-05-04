@@ -1,20 +1,19 @@
-import { Controller } from "react-hook-form";
+import { Controller, Control, Path, FieldValues } from "react-hook-form";
 import { TextInput, StyleSheet, TextInputProps, Text } from "react-native";
-type CustomInputProps = {
-    control: any;
-    name: string;
+type CustomInputProps<T extends FieldValues> = {
+    control: Control<T>;
+    name: Path<T>;
 } & TextInputProps;
 
-export default function CustomInput({
+export default function CustomInput<T extends FieldValues>({
     control,
     name,
     ...props
-}: CustomInputProps) {
+}: CustomInputProps<T>) {
     return (
         <Controller
             control={control}
             name={name}
-           
             render={({
                 field: { value, onChange, onBlur },
                 fieldState: { error },
@@ -25,7 +24,11 @@ export default function CustomInput({
                         value={value}
                         onChangeText={onChange}
                         onBlur={onBlur}
-                        style={[style.input, props.style, error && style.inputError]}
+                        style={[
+                            style.input,
+                            props.style,
+                            error && style.inputError,
+                        ]}
                     />
                     {error && (
                         <Text style={style.error}>* {error?.message}</Text>
@@ -47,7 +50,7 @@ const style = StyleSheet.create({
     },
 
     inputError: {
-        borderWidth: .3,
+        borderWidth: 0.3,
         borderColor: "red",
     },
     error: {
