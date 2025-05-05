@@ -24,11 +24,8 @@ export default function CustomInput<T extends FieldValues>({
                         value={value}
                         onChangeText={onChange}
                         onBlur={onBlur}
-                        style={[
-                            style.input,
-                            props.style,
-                            error && style.inputError,
-                        ]}
+                        style={[error && style.inputError]}
+                        className="bg-gray-800 p-3 rounded-lg text-white"
                     />
                     {error && (
                         <Text style={style.error}>* {error?.message}</Text>
@@ -40,15 +37,6 @@ export default function CustomInput<T extends FieldValues>({
 }
 
 const style = StyleSheet.create({
-    input: {
-        padding: 10,
-        borderWidth: 1,
-        borderColor: "white",
-        borderRadius: 10,
-        backgroundColor: "white",
-        color: "black",
-    },
-
     inputError: {
         borderWidth: 0.3,
         borderColor: "red",

@@ -9,6 +9,7 @@ import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import authAxios from "@/config/authAxios";
 import axios from "axios";
+import { Link } from "expo-router";
 
 type Member = {
     user: {
@@ -55,12 +56,13 @@ export default function Members() {
                 <Text className="text-2xl font-bold text-white">
                     Clientes registrados
                 </Text>
-                <TouchableOpacity
-                    className="bg-blue-500 p-3 rounded-full"
-                    onPress={() => console.log("Navegar a registro")}
+
+                <Link
+                    className="p-3 rounded-full bg-blue-500"
+                    href="/(protected)/(members)/create"
                 >
                     <MaterialIcons name="person-add" size={24} color="white" />
-                </TouchableOpacity>
+                </Link>
             </View>
             {/* Estado de carga */}
             {loading && (
@@ -102,8 +104,7 @@ export default function Members() {
                                 {/* Si necesitas mostrar datos del perfil */}
                                 {item.user.profile && (
                                     <Text className="text-gray-400">
-                                        Matricula:{" "}
-                                        {item.user.profile.matricula}
+                                        Matricula: {item.user.profile.matricula}
                                     </Text>
                                 )}
                             </View>

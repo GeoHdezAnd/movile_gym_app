@@ -23,7 +23,7 @@ type SignInFields = z.infer<typeof signInSchema>;
 
 export default function SignIn() {
     const [error, setError] = useState<string | undefined>(undefined);
-
+    
     const { control, handleSubmit } = useForm({
         resolver: zodResolver(signInSchema),
     });
@@ -31,7 +31,8 @@ export default function SignIn() {
     useEffect(() => {
         const timer = setTimeout(() => {
             setError(undefined);
-        }, 10000); // Cambia el tiempo según tus necesidades
+        }, 10000); 
+        return () => clearTimeout(timer);
     }, [error]);
 
     const { signIn, isAuthenticated } = useAuth();

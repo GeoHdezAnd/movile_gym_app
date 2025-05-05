@@ -10,7 +10,7 @@ import {
     View,
 } from "react-native";
 
-type Plans = {
+type PlansType = {
     id: string;
     name: string;
     description: string;
@@ -22,7 +22,7 @@ type Plans = {
 };
 
 export default function Plans() {
-    const [planes, setPlanes] = useState<Plans[]>([]);
+    const [planes, setPlanes] = useState<PlansType[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 

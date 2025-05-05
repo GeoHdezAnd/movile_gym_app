@@ -11,11 +11,12 @@ import { ActivityIndicator, View } from "react-native";
 export type AuthType = {
     name: string;
     email: string;
+    phone: string;
     role: string;
 };
 const AuthContext = createContext({
     isAuthenticated: false,
-    user: {name: "", email: "", role: ""},
+    user: { name: "", email: "", phone: "", role: "" },
     signIn: (token: string) => {},
     signOut: () => {},
 });
@@ -24,6 +25,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     const [user, setUser] = useState<AuthType>({
         name: "",
         email: "",
+        phone: "",
         role: "",
     });
     const [isAuthenticated, setAuthenticated] = useState<boolean | undefined>(
@@ -33,11 +35,12 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         try {
             await SecureStore.setItemAsync("auth_token", token);
             const res = await authAxios.get("/auth/user");
-                setUser({
-                    name: `${res.data.name} ${res.data.lastName}`,
-                    email: res.data.email,
-                    role: res.data.role.name,
-                });
+            setUser({
+                name: `${res.data.name} ${res.data.lastName}`,
+                email: res.data.email,
+                phone: res.data.phone,
+                role: res.data.role.name,
+            });
             setAuthenticated(true);
         } catch (error) {
             console.log(error);
@@ -56,6 +59,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
                 const res = await authAxios.get("/auth/user");
                 setUser({
                     name: `${res.data.name} ${res.data.lastName}`,
+                    phone: res.data.phone,
                     email: res.data.email,
                     role: res.data.role.name,
                 });
@@ -72,7 +76,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     const signOut = async () => {
         await SecureStore.deleteItemAsync("auth_token");
         setAuthenticated(false);
-        setUser({ name: "", email: "", role: "" });
+        setUser({ name: "", email: "", phone: "", role: "" });
     };
     if (isAuthenticated === undefined) {
         return (
