@@ -55,7 +55,7 @@ export default function SignIn() {
     };
 
     if (isAuthenticated) {
-        return <Redirect href="/(protected)/(admin)/home" />;
+        return <Redirect href="/(protected)/(tabs)/home" />;
     }
     return (
         <KeyboardAvoidingView

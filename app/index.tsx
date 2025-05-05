@@ -16,7 +16,7 @@ export default function Index() {
             <Link style={style.link} href="/sign-up">
                 Ir a crear cuenta
             </Link>
-            <Link style={style.link} href="/(protected)/(admin)/home">
+            <Link style={style.link} href="/(protected)/(tabs)/home">
                 Ir a rutas protegidas
             </Link>
         </View>
