@@ -14,9 +14,27 @@ export type AuthType = {
     phone: string;
     role: string;
 };
+
+export type MemberAuthType = {
+    name: string;
+    email: string;
+    phone: string;
+    role: string;
+    profile: {
+        matricula: string;
+        gender: string;
+    };
+};
 const AuthContext = createContext({
     isAuthenticated: false,
     user: { name: "", email: "", phone: "", role: "" },
+    member: {
+        name: "",
+        email: "",
+        phone: "",
+        role: "",
+        profile: { matricula: "", gender: "" },
+    },
     signIn: (token: string) => {},
     signOut: () => {},
 });
@@ -28,6 +46,13 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         phone: "",
         role: "",
     });
+    const [member, setMember] = useState<MemberAuthType>({
+        name: "",
+        email: "",
+        phone: "",
+        role: "",
+        profile: { matricula: "", gender: "" },
+    });
     const [isAuthenticated, setAuthenticated] = useState<boolean | undefined>(
         undefined
     );
@@ -35,6 +60,20 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         try {
             await SecureStore.setItemAsync("auth_token", token);
             const res = await authAxios.get("/auth/user");
+            if (res.data.role.name === "member") {
+                setMember({
+                    name: `${res.data.name} ${res.data.lastName}`,
+                    email: res.data.email,
+                    phone: res.data.phone,
+                    role: res.data.role.name,
+                    profile: {
+                        matricula: res.data.memberProfile.matricula,
+                        gender: res.data.memberProfile.gender,
+                    },
+                });
+                setAuthenticated(true);
+                return;
+            }
             setUser({
                 name: `${res.data.name} ${res.data.lastName}`,
                 email: res.data.email,
@@ -57,6 +96,20 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
                 }
                 // Verificar token válido con el backend
                 const res = await authAxios.get("/auth/user");
+                if (res.data.role.name === "member") {
+                    setMember({
+                        name: `${res.data.name} ${res.data.lastName}`,
+                        email: res.data.email,
+                        phone: res.data.phone,
+                        role: res.data.role.name,
+                        profile: {
+                            matricula: res.data.memberProfile.matricula,
+                            gender: res.data.memberProfile.gender,
+                        },
+                    });
+                    setAuthenticated(true);
+                    return;
+                }
                 setUser({
                     name: `${res.data.name} ${res.data.lastName}`,
                     phone: res.data.phone,
@@ -77,6 +130,13 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         await SecureStore.deleteItemAsync("auth_token");
         setAuthenticated(false);
         setUser({ name: "", email: "", phone: "", role: "" });
+        setMember({
+            name: "",
+            email: "",
+            phone: "",
+            role: "",
+            profile: { matricula: "", gender: "" },
+        });
     };
     if (isAuthenticated === undefined) {
         return (
@@ -93,7 +153,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     }
     return (
         <AuthContext.Provider
-            value={{ isAuthenticated, user, signIn, signOut }}
+            value={{ isAuthenticated, user, member, signIn, signOut }}
         >
             {children}
         </AuthContext.Provider>

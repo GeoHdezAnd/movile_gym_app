@@ -15,7 +15,6 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 export default function ProtectedLayout() {
     const { user } = useAuth();
-    console.log(user.role);
     if (user.role !== "admin") {
         return <Redirect href={"/(protected)/(user)/home"} />;
     }

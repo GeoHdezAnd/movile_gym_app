@@ -9,7 +9,7 @@ import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import authAxios from "@/config/authAxios";
 import axios from "axios";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 
 type Member = {
     user: {
@@ -31,6 +31,7 @@ export default function Members() {
     const [members, setMembers] = useState<Member[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [message, setMessage] = useState<string | null>(null);
     useEffect(() => {
         const getMembers = async () => {
             try {
@@ -49,6 +50,27 @@ export default function Members() {
         getMembers();
     }, []);
 
+    useEffect(() => {
+        if (message || error) {
+            setTimeout(() => {
+                setMessage(null);
+                setError(null);
+            }, 8000); // Oculta el mensaje después de 8 segundos
+        }
+    }, [message, error]);
+
+    const handleDelete = async (id: string) => {
+        try {
+            const res = await authAxios.delete(`/member/${id}`);
+            setMembers((prevMembers) =>
+                prevMembers.filter((member) => member.user.id !== id)
+            );
+            setMessage(res.data.message);
+        } catch (error) {
+            console.log("Error al eliminar el cliente:", error);
+        }
+    };
+
     return (
         <View className="flex-1 pt-20 bg-background p-4">
             {/* Header */}
@@ -59,7 +81,7 @@ export default function Members() {
 
                 <Link
                     className="p-3 rounded-full bg-blue-500"
-                    href="/(protected)/(members)/create"
+                    href="/(protected)/members/create"
                 >
                     <MaterialIcons name="person-add" size={24} color="white" />
                 </Link>
@@ -75,6 +97,12 @@ export default function Members() {
             {error && (
                 <View className="bg-red-100 p-4 rounded-lg mb-4">
                     <Text className="text-red-800">{error}</Text>
+                </View>
+            )}
+
+            {message && (
+                <View className=" p-4 rounded-lg mb-4">
+                    <Text className="text-green-500 font-bold">{message}</Text>
                 </View>
             )}
 
@@ -111,24 +139,23 @@ export default function Members() {
 
                             {/* Botones de Acción */}
                             <View className="flex-row gap-2 m-auto">
-                                <TouchableOpacity
+                                <Link
                                     className="bg-yellow-500 p-2 rounded-full"
-                                    onPress={() =>
-                                        console.log("Editar", item.user.id)
-                                    }
+                                    href={{
+                                        pathname: "/(protected)/members/[id]",
+                                        params: { id: item.user.id },
+                                    }}
                                 >
                                     <MaterialIcons
                                         name="edit"
                                         size={18}
                                         color="white"
                                     />
-                                </TouchableOpacity>
+                                </Link>
 
                                 <TouchableOpacity
                                     className="bg-red-500 p-2 rounded-full"
-                                    onPress={() =>
-                                        console.log("Eliminar", item.user.id)
-                                    }
+                                    onPress={() => handleDelete(item.user.id)}
                                 >
                                     <MaterialIcons
                                         name="delete"
